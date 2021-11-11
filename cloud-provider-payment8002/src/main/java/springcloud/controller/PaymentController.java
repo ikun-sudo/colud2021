@@ -1,17 +1,12 @@
-package com.ikun.springcloud.controller;
+package springcloud.controller;
 
 import com.ikun.springcloud.entities.CommonResult;
 import com.ikun.springcloud.entities.Payment;
-import com.ikun.springcloud.service.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import java.util.List;
+import springcloud.service.PaymentService;
 
 @RestController
 @Slf4j
@@ -21,8 +16,6 @@ public class PaymentController {
     private PaymentService paymentService;
     @Value("${server.port}")
     private String serverPort;
-    @Resource
-    private DiscoveryClient discoveryClient;
 
     @RequestMapping("/payment/create")
     public CommonResult create(@RequestBody Payment payment) {
@@ -53,20 +46,4 @@ public class PaymentController {
         return "hi ,i'am paymentzipkin server fall back，welcome to here, O(∩_∩)O哈哈~";
     }
 
-
-    @GetMapping(value = "/payment/discovery")
-    public Object discovery()
-    {
-        List<String> services = discoveryClient.getServices();
-        for (String element : services) {
-            log.info("*****element: "+element);
-        }
-
-        List<ServiceInstance> instances = discoveryClient.getInstances("CLOUD-PAYMENT-SERVICE");
-        for (ServiceInstance instance : instances) {
-            log.info(instance.getServiceId()+"\t"+instance.getHost()+"\t"+instance.getPort()+"\t"+instance.getUri());
-        }
-
-        return this.discoveryClient;
-    }
 }
